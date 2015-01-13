@@ -509,10 +509,11 @@ private[yarn] class YarnAllocationHandler(
     priority: Int): ResourceRequest = {
 
     val rsrcRequest = Records.newRecord(classOf[ResourceRequest])
-    val memCapability = Records.newRecord(classOf[Resource])
+    val capability = Records.newRecord(classOf[Resource])
     // There probably is some overhead here, let's reserve a bit more memory.
-    memCapability.setMemory(executorMemory + memoryOverhead)
-    rsrcRequest.setCapability(memCapability)
+    capability.setMemory(executorMemory + memoryOverhead)
+    capability.setVirtualCores(executorCores)
+    rsrcRequest.setCapability(capability)
 
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(priority)
