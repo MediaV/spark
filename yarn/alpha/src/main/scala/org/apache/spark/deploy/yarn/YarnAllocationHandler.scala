@@ -29,7 +29,7 @@ import org.apache.spark.scheduler.SplitInfo
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.api.AMRMProtocol
 import org.apache.hadoop.yarn.api.records._
-import org.apache.hadoop.yarn.api.protocolrecords.AllocateRequest
+import org.apache.hadoop.yarn.api.protocolrecords.{AllocateRequest, AllocateResponse}
 import org.apache.hadoop.yarn.util.Records
 
 /**
@@ -118,7 +118,7 @@ private[yarn] class YarnAllocationHandler(
           request.getPriority,
           request.getCapability))
     }
-    new AlphaAllocateResponse(resourceManager.allocate(req).getAMResponse())
+    new AlphaAllocateResponse(resourceManager.allocate(req))
   }
 
   override protected def releaseContainer(container: Container) = {
@@ -220,7 +220,7 @@ private[yarn] class YarnAllocationHandler(
     retval
   }
 
-  private class AlphaAllocateResponse(response: AMResponse) extends YarnAllocateResponse {
+  private class AlphaAllocateResponse(response: AllocateResponse) extends YarnAllocateResponse {
     override def getAllocatedContainers() = response.getAllocatedContainers()
     override def getAvailableResources() = response.getAvailableResources()
     override def getCompletedContainersStatuses() = response.getCompletedContainersStatuses()
