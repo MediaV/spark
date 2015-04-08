@@ -1550,6 +1550,16 @@
     -->
 
     <profile>
+      <id>hadoop-cdh4.6.0</id>
+      <properties>
+        <hadoop.version>2.0.0-cdh4.6.0</hadoop.version>
+	<yarn.version>2.0.0-cdh4.6.0</yarn.version>
+        <protobuf.version>2.4.0a</protobuf.version>
+        <hbase.version>0.94.15-cdh4.6.0</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
       <id>hadoop-0.23</id>
       <!-- SPARK-1121: Adds an explicit dependency on Avro to work around a Hadoop 0.23.X issue -->
       <dependencies>
@@ -1605,6 +1615,14 @@
       <modules>
         <module>yarn</module>
         <module>network/yarn</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>yarn-cdh4.6.0</id>
+      <modules>
+        <module>yarn-cdh4.6.0</module>
+        <module>network/yarn-cdh4.6.0</module>
       </modules>
     </profile>
 
