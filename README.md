@@ -1,3 +1,25 @@
+# MVAD Spark
+
+MVAD Spark is based on Apache Spark version v1.3.0 (currently latest version). 
+We rebuild it because Spark 1.3 or later version will not support yarn-alpha API, 
+but we are still using CDH4.6.0 in production. 
+
+we rewrite two modules :
+
+* yarn-cdh4.6.0 : spark on yarn main module
+* network/yarn-cdh4.6.0 : a YarnShuffleService used by [Dynamic Allocation](http://spark.apache.org/docs/latest/job-scheduling.html#dynamic-resource-allocation). 
+
+and we add two extra profile in pom.xml
+
+* hadoop-cdh4.6.0
+* yarn-cdh4.6.0
+
+we build our package using the following command:
+
+    ./make-distribution.sh --tgz -Phadoop-cdh4.6.0 -Pyarn-cdh4.6.0 -Phive -Phive-0.12.0 -Phive-thriftserver -Pspark-ganglia-lgpl -Phadoop-provided -Phbase-provided
+
+-------------------------------------------------------------------------
+
 # Apache Spark
 
 Spark is a fast and general cluster computing system for Big Data. It provides
