@@ -1,6 +1,6 @@
 # MVAD Spark
 
-MVAD Spark is based on Apache Spark version v1.3.0 (currently latest version). 
+MVAD Spark is based on Apache Spark version v1.3.1 (currently latest version). 
 We rebuild it because Spark 1.3 or later version will not support yarn-alpha API, 
 but we are still using CDH4.6.0 in production. 
 
