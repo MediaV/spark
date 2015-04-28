@@ -20,6 +20,7 @@ package org.apache.spark.storage
 import java.text.SimpleDateFormat
 import java.util.{Date, Random}
 
+import tachyon.TachyonURI
 import tachyon.client.TachyonFS
 import tachyon.client.TachyonFile
 
@@ -64,7 +65,7 @@ private[spark] class TachyonBlockManager(
   }
 
   def fileExists(file: TachyonFile): Boolean = {
-    client.exist(file.getPath())
+    client.exist(new TachyonURI(file.getPath()))
   }
 
   def getFile(filename: String): TachyonFile = {
@@ -82,7 +83,7 @@ private[spark] class TachyonBlockManager(
           old
         } else {
           val path = tachyonDirs(dirId) + "/" + "%02x".format(subDirId)
-          client.mkdir(path)
+          client.mkdir(new TachyonURI(path))
           val newDir = client.getFile(path)
           subDirs(dirId)(subDirId) = newDir
           newDir
@@ -90,7 +91,7 @@ private[spark] class TachyonBlockManager(
       }
     }
     val filePath = subDir + "/" + filename
-    if(!client.exist(filePath)) {
+    if(!client.exist(new TachyonURI(filePath))) {
       client.createFile(filePath)
     }
     val file = client.getFile(filePath)
@@ -114,8 +115,8 @@ private[spark] class TachyonBlockManager(
         try {
           tachyonDirId = "%s-%04x".format(dateFormat.format(new Date), rand.nextInt(65536))
           val path = rootDir + "/" + "spark-tachyon-" + tachyonDirId
-          if (!client.exist(path)) {
-            foundLocalDir = client.mkdir(path)
+          if (!client.exist(new TachyonURI(path))) {
+            foundLocalDir = client.mkdir(new TachyonURI(path))
             tachyonDir = client.getFile(path)
           }
         } catch {
