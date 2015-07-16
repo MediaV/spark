@@ -67,7 +67,7 @@ class ExecutorRunnable(
     startContainer
   }
 
-  def startContainer = {
+  def startContainer: Unit = {
     logInfo("Setting up ContainerLaunchContext")
 
     val ctx = Records.newRecord(classOf[ContainerLaunchContext])
