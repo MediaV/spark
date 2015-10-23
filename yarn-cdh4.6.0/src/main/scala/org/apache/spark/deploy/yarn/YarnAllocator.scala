@@ -23,6 +23,8 @@ import java.util.regex.Pattern
 
 import org.apache.hadoop.yarn.api.AMRMProtocol
 import org.apache.hadoop.yarn.util.Records
+import org.apache.spark.rpc.RpcEndpointRef
+import org.apache.spark.util.Utils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.{ArrayBuffer, HashMap, HashSet}
@@ -58,6 +60,8 @@ object AllocationType extends Enumeration {
  * manage container allocation for a running Spark application.
  */
 private[yarn] class YarnAllocator(
+    driverUrl: String,
+    driverRef: RpcEndpointRef,
     conf: Configuration,
     sparkConf: SparkConf,
     amClient: AMRMProtocol,
@@ -97,7 +101,11 @@ private[yarn] class YarnAllocator(
   private val executorIdCounter = new AtomicInteger()
   private val numExecutorsFailed = new AtomicInteger()
 
-  private var maxExecutors = args.numExecutors
+  private var maxExecutors = if (Utils.isDynamicAllocationEnabled(sparkConf)) {
+    sparkConf.getInt("spark.dynamicAllocation.initialExecutors", 0)
+  } else {
+    sparkConf.getInt("spark.executor.instances", YarnSparkHadoopUtil.DEFAULT_NUMBER_EXECUTORS)
+  }
 
   // Keep track of which container is running which executor to remove the executors later
   private val executorIdToContainer = new HashMap[String, Container]
@@ -119,6 +127,9 @@ private[yarn] class YarnAllocator(
     new ThreadFactoryBuilder().setNameFormat("ContainerLauncher #%d").setDaemon(true).build())
   launcherPool.allowCoreThreadTimeOut(true)
 
+
+  def getNumPendingAllocate: Int = numPendingAllocate.intValue()
+
   def getNumExecutorsRunning: Int = numExecutorsRunning.intValue
 
   def getNumExecutorsFailed: Int = numExecutorsFailed.intValue
@@ -127,7 +138,7 @@ private[yarn] class YarnAllocator(
    * Request as many executors from the ResourceManager as needed to reach the desired total.
    * This takes into account executors already running or pending.
    */
-  def requestTotalExecutors(requestedTotal: Int): Unit = synchronized {
+  def requestTotalExecutors(requestedTotal: Int): Boolean = synchronized {
     val currentTotal = numPendingAllocate.get + numExecutorsRunning.get
     if (requestedTotal > currentTotal) {
       maxExecutors += (requestedTotal - currentTotal)
@@ -135,9 +146,11 @@ private[yarn] class YarnAllocator(
       // If we request executors twice before `allocateResources` is called, then we will end up
       // double counting the number requested because `numPendingAllocate` is not updated yet.
       allocateResources()
+      true
     } else {
       logInfo(s"Not allocating more executors because there are already $currentTotal " +
         s"(application requested $requestedTotal total)")
+      false
     }
   }
 

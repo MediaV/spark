@@ -17,10 +17,21 @@
 
 package org.apache.spark.scheduler.cluster
 
+import java.net.NetworkInterface
+
+import org.apache.hadoop.yarn.api.ApplicationConstants
+import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
+
+import scala.collection.JavaConverters._
+
+import org.apache.hadoop.yarn.api.records.NodeState
+import org.apache.hadoop.yarn.conf.YarnConfiguration
+
 import org.apache.spark.SparkContext
+import org.apache.spark.deploy.yarn.YarnSparkHadoopUtil
 import org.apache.spark.deploy.yarn.YarnSparkHadoopUtil._
 import org.apache.spark.scheduler.TaskSchedulerImpl
-import org.apache.spark.util.IntParam
+import org.apache.spark.util.{IntParam, Utils}
 
 private[spark] class YarnClusterSchedulerBackend(
     scheduler: TaskSchedulerImpl,
@@ -53,4 +64,28 @@ private[spark] class YarnClusterSchedulerBackend(
       logError("Application attempt ID is not set.")
       super.applicationAttemptId
     }
+
+  override def getDriverLogUrls: Option[Map[String, String]] = {
+    var driverLogs: Option[Map[String, String]] = None
+    try {
+      val yarnConf = new YarnConfiguration(sc.hadoopConfiguration)
+      val containerId = YarnSparkHadoopUtil.get.getContainerId
+
+      val httpAddress = System.getenv(ApplicationConstants.NM_HOST_ENV) +
+        ":" + System.getenv(ApplicationConstants.NM_HTTP_PORT_ENV)
+
+      val user = Utils.getCurrentUserName()
+      val httpScheme = "http://"
+      val baseUrl = s"$httpScheme$httpAddress/node/containerlogs/$containerId/$user"
+      logDebug(s"Base URL for logs: $baseUrl")
+      driverLogs = Some(Map(
+        "stderr" -> s"$baseUrl/stderr?start=-4096",
+        "stdout" -> s"$baseUrl/stdout?start=-4096"))
+    } catch {
+      case e: Exception =>
+        logInfo("Error while building AM log links, so AM" +
+          " logs link will not appear in application UI", e)
+    }
+    driverLogs
+  }
 }
