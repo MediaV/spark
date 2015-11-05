@@ -568,7 +568,7 @@ private[spark] class ApplicationMaster(
     }
 
     override def receiveAndReply(context: RpcCallContext): PartialFunction[Any, Unit] = {
-      case RequestExecutors(requestedTotal,_,_) =>
+      case RequestExecutors(requestedTotal, _, _) =>
         Option(allocator) match {
           case Some(a) =>
             allocatorLock.synchronized {

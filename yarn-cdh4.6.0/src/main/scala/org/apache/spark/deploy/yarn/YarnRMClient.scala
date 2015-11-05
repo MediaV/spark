@@ -75,8 +75,8 @@ private[spark] class YarnRMClient(args: ApplicationMasterArguments) extends Logg
       registerApplicationMaster(uiAddress)
       registered = true
     }
-    new YarnAllocator(driverUrl, driverRef, conf, sparkConf, amClient, getAttemptId(), args, preferredNodeLocations,
-      securityMgr)
+    new YarnAllocator(driverUrl, driverRef, conf, sparkConf, amClient, getAttemptId(), 
+        args, preferredNodeLocations, securityMgr)
   }
 
   /**
