@@ -60,6 +60,12 @@ class KMeansModel @Since("1.1.0") (@Since("1.0.0") val clusterCenters: Array[Vec
     KMeans.findClosest(clusterCentersWithNorm, new VectorWithNorm(point))._1
   }
 
+  val ccWithNorm: Array[VectorWithNorm] = clusterCenters.map(new VectorWithNorm(_))
+
+  def predict2(point: Vector): (Int, Double) = {
+    KMeans.findClosest(ccWithNorm, new VectorWithNorm(point))
+  }
+
   /**
    * Maps given points to their cluster indices.
    */

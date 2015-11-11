@@ -26,7 +26,7 @@
   </parent>
   <groupId>org.apache.spark</groupId>
   <artifactId>spark-parent_2.10</artifactId>
-  <version>1.5.2</version>
+  <version>1.5.2-mv1</version>
   <packaging>pom</packaging>
   <name>Spark Project Parent POM</name>
   <url>http://spark.apache.org/</url>
@@ -320,6 +320,22 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>mediav-releases</id>
+      <name>Releases Repository</name>
+      <url>https://maven.corp.mediav.com/nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <id>mediav-snapshots</id>
+      <name>Snapshots Repository</name>
+      <url>https://maven.corp.mediav.com/nexus/content/repositories/snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <!--
       This is a dummy dependency that is used along with the shading plug-in
@@ -2371,6 +2387,26 @@
         <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.6.0</curator.version>
       </properties>
+    </profile>
+
+    <profile>
+      <id>hadoop-cdh4.6.0</id>
+      <properties>
+        <hadoop.version>2.0.0-cdh4.6.0</hadoop.version>
+        <yarn.version>2.0.0-cdh4.6.0</yarn.version>
+        <protobuf.version>2.4.0a</protobuf.version>
+        <akka.group>org.spark-project.akka</akka.group>
+        <akka.version>2.3.4-spark</akka.version>
+        <hbase.version>0.94.15-cdh4.6.0</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>yarn-cdh4.6.0</id>
+      <modules>
+        <module>yarn-cdh4.6.0</module>
+        <module>network/yarn-cdh4.6.0</module>
+      </modules>
     </profile>
 
     <profile>
