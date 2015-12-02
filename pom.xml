@@ -2374,6 +2374,19 @@
     </profile>
 
     <profile>
+      <id>cdh5.5.0</id>
+      <properties>
+        <hadoop.version>2.6.0-cdh5.5.0</hadoop.version>
+        <hbase.version>1.0.0-cdh5.5.0</hbase.version>
+        <zookeeper.version>3.4.5-cdh5.5.0</zookeeper.version>
+        <curator.version>2.7.1</curator.version>
+        <jets3t.version>0.9.0</jets3t.version>
+        <snappy.version>1.0.4.1</snappy.version>
+        <avro.version>1.7.6-cdh5.5.0</avro.version>
+      </properties>
+    </profile>
+
+    <profile>
       <id>yarn</id>
       <modules>
         <module>yarn</module>
