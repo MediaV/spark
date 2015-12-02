@@ -2374,7 +2374,7 @@
     </profile>
 
     <profile>
-      <id>cdh5.5.0</id>
+      <id>hadoop-cdh5.5.0</id>
       <properties>
         <hadoop.version>2.6.0-cdh5.5.0</hadoop.version>
         <hbase.version>1.0.0-cdh5.5.0</hbase.version>
