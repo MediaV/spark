@@ -326,6 +326,22 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>mediav-releases</id>
+      <name>Releases Repository</name>
+      <url>https://maven.corp.mediav.com/nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <id>mediav-snapshots</id>
+      <name>Snapshots Repository</name>
+      <url>https://maven.corp.mediav.com/nexus/content/repositories/snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <!--
       This is a dummy dependency that is used along with the shading plug-in
